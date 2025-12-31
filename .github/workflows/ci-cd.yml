@@ -50,7 +50,7 @@ jobs:
 
   push-image:
     needs: build-and-test
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     steps:
     - name: Log in to Docker Registry
@@ -67,7 +67,7 @@ jobs:
 
   update-manifest:
     needs: push-image
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     steps:
     - name: Checkout manifest repository
