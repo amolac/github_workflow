@@ -62,8 +62,8 @@ jobs:
 
     - name: Push Docker Image
       run: |
-        docker tag my-node-app:${{ github.sha }} my-docker-repo/my-node-app:${{ github.sha }}
-        docker push my-docker-repo/my-node-app:${{ github.sha }}
+        docker tag my-node-app:${{ github.sha }} amolchoorappady/my-node-app:${{ github.sha }}
+        docker push amolchoorappady/my-node-app:${{ github.sha }}
 
   update-manifest:
     needs: push-image
@@ -79,7 +79,7 @@ jobs:
     - name: Update Manifest File
       run: |
         echo "Updating manifest file..."
-        echo "image: my-docker-repo/my-node-app:${{ github.sha }}" >> manifest.yml
+        echo "image: amolchoorappady/my-node-app:${{ github.sha }}" >> manifest.yml
         git config --global user.email "amolchoorappady@gmail.com"
         git config --global user.name "Amol Choorappady"
         git add manifest.yml
