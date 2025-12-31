@@ -29,7 +29,7 @@ jobs:
 
     - name: Run Tests
       run: |
-        docker run --rm my-node-app:${{ github.sha }} npm test
+        npm test
 
     - name: Trivy Image Scan
       uses: aquasecurity/trivy-action@master
