@@ -62,7 +62,7 @@ jobs:
 
     - name: Push Docker Image
       run: |
-        docker tag my-node-app:${{ github.sha }} amolchoorappady/my-node-app:${{ github.sha }}
+        docker tag amolchoorappady/my-node-app:${{ github.sha }}
         docker push amolchoorappady/my-node-app:${{ github.sha }}
 
   update-manifest:
