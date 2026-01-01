@@ -25,7 +25,7 @@ jobs:
 
     - name: Build Docker Image
       run: |
-        docker build -t amolchoorappady/my-node-app:${{ github.sha }} .
+        docker build -t amolchoorappady/my-node-app:${{ github.sha }} amolchoorappady/my-node-app:latest .
 
     - name: Run Tests
       run: |
@@ -58,7 +58,7 @@ jobs:
 
     - name: Push Docker Image
       run: |
-        docker push amolchoorappady/my-node-app:${{ github.sha }}
+        docker push amolchoorappady/my-node-app:latest
 
   
     - name: Checkout manifest repository
