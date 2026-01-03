@@ -9,6 +9,10 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
+    env:
+      IMAGE_NAME: amolchoorappady/my-node-app
+      MANIFEST_FILE: deployment.yml   # update if your manifest file has a different name
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
@@ -25,7 +29,7 @@ jobs:
 
     - name: Build Docker Image
       run: |
-        docker build -t amolchoorappady/my-node-app:${{ github.sha }} .
+        docker build -t $IMAGE_NAME:${{ github.sha }} .
 
     - name: Run Tests
       run: |
@@ -34,7 +38,7 @@ jobs:
     - name: Trivy Image Scan
       uses: aquasecurity/trivy-action@master
       with:
-        image-ref: amolchoorappady/my-node-app:${{ github.sha }}
+        image-ref: $IMAGE_NAME:${{ github.sha }}
 
     - name: SonarQube Scan
       uses: SonarSource/sonarqube-scan-action@v6
@@ -48,33 +52,26 @@ jobs:
           -Dsonar.organization=amolac
           -Dsonar.host.url=https://sonarcloud.io
 
-
-    - name: Log in to Docker Registry
-      uses: docker/login-action@v2
-      with:
-        registry: docker.io
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
-
     - name: Push Docker Image
       run: |
-        docker tag amolchoorappady/my-node-app:${{ github.sha }} amolchoorappady/my-node-app:latest
-        docker push amolchoorappady/my-node-app:latest
+        docker tag $IMAGE_NAME:${{ github.sha }} $IMAGE_NAME:latest
+        docker push $IMAGE_NAME:${{ github.sha }}
+        docker push $IMAGE_NAME:latest
 
-  
     - name: Checkout manifest repository
       uses: actions/checkout@v2
       with:
         repository: amolac/manifest-repo
         token: ${{ secrets.G_TOKEN }}
+        path: manifest-repo
 
-    - name: Update Manifest File
+    - name: Update Deployment Image in Manifest
       run: |
-        echo "Updating manifest file..."
-        echo "image: amolchoorappady/my-node-app:latest >> manifest.yml
-        git config --global user.email "amolchoorappady@gmail.com"
-        git config --global user.name "Amol Choorappady"
-        git add manifest.yml
-        git commit -m "Update manifest with new image version"
+        cd manifest-repo
+        git config user.email "amolchoorappady@gmail.com"
+        git config user.name "Amol Choorappady"
+        # Replace the image tag in deployment.yml
+        sed -i "s|\($IMAGE_NAME:\).*|\1${{ github.sha }}|" $MANIFEST_FILE
+        git add $MANIFEST_FILE
+        git commit -m "Update deployment image to ${{ github.sha }}"
         git push origin main
-
